@@ -214,14 +214,6 @@ export const useOrderlyConfig = () => {
         href: "/rewards",
         children: [
           {
-            name: t("common.tradingRewards"),
-            href: "https://app.orderly.network/tradingRewards",
-            description: t("extend.tradingRewards.description"),
-            icon: <OrderlyIcon size={14} />,
-            activeIcon: <OrderlyActiveIcon size={14} />,
-            target: "_blank",
-          },
-          {
             name: t("extend.staking"),
             href: "https://app.orderly.network/staking",
             description: t("extend.staking.description"),

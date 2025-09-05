@@ -192,7 +192,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 
 	const appProvider = (
 		<OrderlyAppProvider
-			brokerId={import.meta.env.VITE_ORDERLY_BROKER_ID}
+			brokerId={networkId === 'mainnet' ? import.meta.env.VITE_ORDERLY_BROKER_ID : 'demo'}
 			brokerName={import.meta.env.VITE_ORDERLY_BROKER_NAME}
 			networkId={networkId}
 			onChainChanged={onChainChanged}

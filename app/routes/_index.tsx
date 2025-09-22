@@ -3,18 +3,21 @@ import { useNavigate, useSearchParams } from "@remix-run/react";
 import { useEffect } from "react";
 import { DEFAULT_SYMBOL } from "@/utils/storage";
 import { getPageMeta } from "@/utils/seo";
+import { getRuntimeConfig } from "@/utils/runtime-config";
 
 export const meta: MetaFunction = () => {
   const rootSeoTags = getPageMeta();
   
   const pageSpecificTags = [];
   
-  if (import.meta.env.VITE_APP_NAME) {
-    pageSpecificTags.push({ title: import.meta.env.VITE_APP_NAME });
+  const appName = getRuntimeConfig("VITE_APP_NAME");
+  if (appName) {
+    pageSpecificTags.push({ title: appName });
   }
   
-  if (import.meta.env.VITE_APP_DESCRIPTION) {
-    pageSpecificTags.push({ name: "description", content: import.meta.env.VITE_APP_DESCRIPTION });
+  const appDescription = getRuntimeConfig("VITE_APP_DESCRIPTION");
+  if (appDescription) {
+    pageSpecificTags.push({ name: "description", content: appDescription });
   }
   
   return [...rootSeoTags, ...pageSpecificTags];

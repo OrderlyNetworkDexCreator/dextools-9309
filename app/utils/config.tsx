@@ -6,6 +6,7 @@ import { AppLogos } from "@orderly.network/react-app";
 import { OrderlyActiveIcon, OrderlyIcon } from "../components/icons/orderly";
 import { withBasePath } from "./base-path";
 import { PortfolioActiveIcon, PortfolioInactiveIcon, TradingActiveIcon, TradingInactiveIcon, LeaderboardActiveIcon, LeaderboardInactiveIcon, MarketsActiveIcon, MarketsInactiveIcon } from "@orderly.network/ui";
+import { getRuntimeConfig, getRuntimeConfigBoolean, getRuntimeConfigNumber } from "./runtime-config";
 
 interface MainNavItem {
   name: string;
@@ -54,7 +55,7 @@ const DEFAULT_ENABLED_MENUS = [
 ];
 
 const getCustomMenuItems = (): MainNavItem[] => {
-  const customMenusEnv = import.meta.env.VITE_CUSTOM_MENUS;
+  const customMenusEnv = getRuntimeConfig('VITE_CUSTOM_MENUS');
   
   if (!customMenusEnv || typeof customMenusEnv !== 'string' || customMenusEnv.trim() === '') {
     return [];
@@ -90,7 +91,7 @@ const getCustomMenuItems = (): MainNavItem[] => {
 };
 
 const getEnabledMenus = () => {
-  const enabledMenusEnv = import.meta.env.VITE_ENABLED_MENUS;
+  const enabledMenusEnv = getRuntimeConfig('VITE_ENABLED_MENUS');
   
   if (!enabledMenusEnv || typeof enabledMenusEnv !== 'string' || enabledMenusEnv.trim() === '') {
     return DEFAULT_ENABLED_MENUS;
@@ -115,10 +116,10 @@ const getEnabledMenus = () => {
 };
 
 const getPnLBackgroundImages = (): string[] => {
-  const useCustomPnL = import.meta.env.VITE_USE_CUSTOM_PNL_POSTERS === "true";
+  const useCustomPnL = getRuntimeConfigBoolean('VITE_USE_CUSTOM_PNL_POSTERS');
   
   if (useCustomPnL) {
-    const customPnLCount = parseInt(import.meta.env.VITE_CUSTOM_PNL_POSTER_COUNT, 10);
+    const customPnLCount = getRuntimeConfigNumber('VITE_CUSTOM_PNL_POSTER_COUNT');
     
     if (isNaN(customPnLCount) || customPnLCount < 1) {
       return [
@@ -161,7 +162,7 @@ const getBottomNavIcon = (menuName: string) => {
 };
 
 const getColorConfig = (): ColorConfigInterface | undefined => {
-  const customColorConfigEnv = import.meta.env.VITE_TRADING_VIEW_COLOR_CONFIG;
+  const customColorConfigEnv = getRuntimeConfig('VITE_TRADING_VIEW_COLOR_CONFIG');
   
   if (!customColorConfigEnv || typeof customColorConfigEnv !== 'string' || customColorConfigEnv.trim() === '') {
     return undefined;
@@ -208,7 +209,7 @@ export const useOrderlyConfig = () => {
       mainMenus: allMenuItems,
     };
 
-    if (import.meta.env.VITE_ENABLE_CAMPAIGNS === "true") {
+    if (getRuntimeConfigBoolean('VITE_ENABLE_CAMPAIGNS')) {
       mainNavProps.campaigns = {
         name: "$ORDER",
         href: "/rewards",
@@ -232,20 +233,20 @@ export const useOrderlyConfig = () => {
           mainMenus: bottomNavMenus,
         },
         footerProps: {
-          telegramUrl: import.meta.env.VITE_TELEGRAM_URL || undefined,
-          discordUrl: import.meta.env.VITE_DISCORD_URL || undefined,
-          twitterUrl: import.meta.env.VITE_TWITTER_URL || undefined,
+          telegramUrl: getRuntimeConfig('VITE_TELEGRAM_URL') || undefined,
+          discordUrl: getRuntimeConfig('VITE_DISCORD_URL') || undefined,
+          twitterUrl: getRuntimeConfig('VITE_TWITTER_URL') || undefined,
           trailing: <span className="oui-text-2xs oui-text-base-contrast-54">Charts powered by <a href="https://tradingview.com" target="_blank" rel="noopener noreferrer">TradingView</a></span>
         },
       },
       orderlyAppProvider: {
         appIcons: {
           main:
-            import.meta.env.VITE_HAS_PRIMARY_LOGO === "true"
+            getRuntimeConfigBoolean('VITE_HAS_PRIMARY_LOGO')
               ? { component: <img src={withBasePath("/logo.webp")} alt="logo" style={{ height: "42px" }} /> }
               : { img: withBasePath("/orderly-logo.svg") },
           secondary: {
-            img: import.meta.env.VITE_HAS_SECONDARY_LOGO === "true"
+            img: getRuntimeConfigBoolean('VITE_HAS_SECONDARY_LOGO')
               ? withBasePath("/logo-secondary.webp")
               : withBasePath("/orderly-logo-secondary.svg"),
           },
@@ -266,7 +267,7 @@ export const useOrderlyConfig = () => {
           brandColor: "rgba(255, 255, 255, 0.98)",
           // ref
           refLink: typeof window !== 'undefined' ? window.location.origin : undefined,
-          refSlogan: import.meta.env.VITE_ORDERLY_BROKER_NAME || "Orderly Network",
+          refSlogan: getRuntimeConfig('VITE_ORDERLY_BROKER_NAME') || "Orderly Network",
         },
       },
     };

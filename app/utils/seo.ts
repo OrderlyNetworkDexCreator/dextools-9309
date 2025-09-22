@@ -1,3 +1,5 @@
+import { getRuntimeConfig, getRuntimeConfigArray } from "./runtime-config";
+
 export interface SEOConfig {
   siteName?: string;
   siteDescription?: string;
@@ -56,23 +58,22 @@ export function getUserLanguage(): string {
 
 export function getSEOConfig(): SEOConfig {
   return {
-    siteName: import.meta.env.VITE_SEO_SITE_NAME,
-    siteDescription: import.meta.env.VITE_SEO_SITE_DESCRIPTION,
-    siteUrl: import.meta.env.VITE_SEO_SITE_URL,
-    language: import.meta.env.VITE_SEO_SITE_LANGUAGE,
-    locale: import.meta.env.VITE_SEO_SITE_LOCALE,
-    twitterHandle: import.meta.env.VITE_SEO_TWITTER_HANDLE,
-    themeColor: import.meta.env.VITE_SEO_THEME_COLOR,
-    keywords: import.meta.env.VITE_SEO_KEYWORDS,
+    siteName: getRuntimeConfig("VITE_SEO_SITE_NAME"),
+    siteDescription: getRuntimeConfig("VITE_SEO_SITE_DESCRIPTION"),
+    siteUrl: getRuntimeConfig("VITE_SEO_SITE_URL"),
+    language: getRuntimeConfig("VITE_SEO_SITE_LANGUAGE"),
+    locale: getRuntimeConfig("VITE_SEO_SITE_LOCALE"),
+    twitterHandle: getRuntimeConfig("VITE_SEO_TWITTER_HANDLE"),
+    themeColor: getRuntimeConfig("VITE_SEO_THEME_COLOR"),
+    keywords: getRuntimeConfig("VITE_SEO_KEYWORDS"),
   };
 }
 
 function getAvailableLanguages(): string[] {
-  const envLanguages = import.meta.env.VITE_AVAILABLE_LANGUAGES;
-  if (!envLanguages) return ["en"];
+  const languages = getRuntimeConfigArray("VITE_AVAILABLE_LANGUAGES");
+  if (languages.length === 0) return ["en"];
 
-  return envLanguages
-    .split(",")
+  return languages
     .map((code: string) => code.trim())
     .filter((code: string) =>
       SUPPORTED_LANGUAGES.some((lang) => lang.code === code)

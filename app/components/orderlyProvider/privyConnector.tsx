@@ -3,11 +3,12 @@ import { WalletConnectorPrivyProvider, Network } from '@orderly.network/wallet-c
 import type { NetworkId } from "@orderly.network/types";
 import { QueryClient } from "@tanstack/query-core";
 import { getEvmConnectors, getSolanaConfig } from '../../utils/walletConfig';
+import { getRuntimeConfig, getRuntimeConfigBoolean } from '@/utils/runtime-config';
 
 type LoginMethod = "email" | "passkey" | "twitter" | "google";
 
 const getLoginMethods = (): LoginMethod[] => {
-  const loginMethodsEnv = import.meta.env.VITE_PRIVY_LOGIN_METHODS;
+  const loginMethodsEnv = getRuntimeConfig('VITE_PRIVY_LOGIN_METHODS');
   if (!loginMethodsEnv) {
     return ['email'];
   }
@@ -25,11 +26,14 @@ const PrivyConnector = ({ children, networkId }: {
   children: ReactNode;
   networkId: NetworkId;
 }) => {
-  const appId = import.meta.env.VITE_PRIVY_APP_ID;
-  const termsOfUseUrl = import.meta.env.VITE_PRIVY_TERMS_OF_USE;
-  const enableAbstractWallet = import.meta.env.VITE_ENABLE_ABSTRACT_WALLET === 'true';
-  const disableEVMWallets = import.meta.env.VITE_DISABLE_EVM_WALLETS === 'true';
-  const disableSolanaWallets = import.meta.env.VITE_DISABLE_SOLANA_WALLETS === 'true';
+  const appId = getRuntimeConfig('VITE_PRIVY_APP_ID');
+  if (!appId) {
+    throw new Error(`VITE_PRIVY_APP_ID not set`)
+  }
+  const termsOfUseUrl = getRuntimeConfig('VITE_PRIVY_TERMS_OF_USE');
+  const enableAbstractWallet = getRuntimeConfigBoolean('VITE_ENABLE_ABSTRACT_WALLET');
+  const disableEVMWallets = getRuntimeConfigBoolean('VITE_DISABLE_EVM_WALLETS');
+  const disableSolanaWallets = getRuntimeConfigBoolean('VITE_DISABLE_SOLANA_WALLETS');
   const loginMethods = getLoginMethods();
 
   return (

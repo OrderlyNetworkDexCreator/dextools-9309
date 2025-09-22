@@ -1,5 +1,7 @@
+import { getRuntimeConfig } from "./runtime-config";
+
 export function generatePageTitle(title: string) {
-  return `${title} | ${import.meta.env.VITE_ORDERLY_BROKER_NAME}`;
+  return `${title} | ${getRuntimeConfig("VITE_ORDERLY_BROKER_NAME")}`;
 }
 
 export function formatSymbol(symbol: string, format = "base-type") {

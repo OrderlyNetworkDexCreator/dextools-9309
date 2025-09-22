@@ -3,6 +3,7 @@ import { WalletConnectorProvider } from '@orderly.network/wallet-connector';
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import type { NetworkId } from "@orderly.network/types";
 import { getEvmInitialConfig, getSolanaWallets } from '../../utils/walletConfig';
+import { getRuntimeConfigBoolean } from '@/utils/runtime-config';
 
 interface WalletConnectorProps {
   children: ReactNode;
@@ -10,8 +11,8 @@ interface WalletConnectorProps {
 }
 
 const WalletConnector = ({ children, networkId }: WalletConnectorProps) => {
-  const disableEVMWallets = import.meta.env.VITE_DISABLE_EVM_WALLETS === 'true';
-  const disableSolanaWallets = import.meta.env.VITE_DISABLE_SOLANA_WALLETS === 'true';
+  const disableEVMWallets = getRuntimeConfigBoolean('VITE_DISABLE_EVM_WALLETS');
+  const disableSolanaWallets = getRuntimeConfigBoolean('VITE_DISABLE_SOLANA_WALLETS');
 
   const evmInitial = disableEVMWallets ? undefined : getEvmInitialConfig();
 

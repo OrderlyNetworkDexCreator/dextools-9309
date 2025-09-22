@@ -2,6 +2,7 @@ import { MetaFunction } from "@remix-run/node";
 import { MarketsHomePage } from "@orderly.network/markets";
 import { generatePageTitle } from "@/utils/utils";
 import { getPageMeta } from "@/utils/seo";
+import { getRuntimeConfig, getRuntimeConfigBoolean } from "@/utils/runtime-config";
 
 export const meta: MetaFunction = () => {
   const rootSeoTags = getPageMeta();
@@ -14,13 +15,11 @@ export default function MarketsPage() {
     <MarketsHomePage
       comparisonProps={{
         exchangesIconSrc:
-          import.meta.env.VITE_HAS_SECONDARY_LOGO === "true"
+          getRuntimeConfigBoolean("VITE_HAS_SECONDARY_LOGO")
             ? "/logo-secondary.webp"
             : undefined,
         exchangesName:
-          import.meta.env.VITE_ORDERLY_BROKER_NAME
-            ? import.meta.env.VITE_ORDERLY_BROKER_NAME
-            : undefined,
+          getRuntimeConfig("VITE_ORDERLY_BROKER_NAME"),
       }}
     />
   );

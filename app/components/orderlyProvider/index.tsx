@@ -5,14 +5,15 @@ import type { NetworkId } from "@orderly.network/types";
 import { LocaleProvider, LocaleCode, LocaleEnum, defaultLanguages } from "@orderly.network/i18n";
 import { withBasePath } from "@/utils/base-path";
 import { getSEOConfig, getUserLanguage } from "@/utils/seo";
+import { getRuntimeConfigBoolean, getRuntimeConfigArray, getRuntimeConfig } from "@/utils/runtime-config";
 
 const NETWORK_ID_KEY = "orderly_network_id";
 
 const getNetworkId = (): NetworkId => {
 	if (typeof window === "undefined") return "mainnet";
 	
-	const disableMainnet = import.meta.env.VITE_DISABLE_MAINNET === 'true';
-	const disableTestnet = import.meta.env.VITE_DISABLE_TESTNET === 'true';
+	const disableMainnet = getRuntimeConfigBoolean('VITE_DISABLE_MAINNET');
+	const disableTestnet = getRuntimeConfigBoolean('VITE_DISABLE_TESTNET');
 	
 	if (disableMainnet && !disableTestnet) {
 		return "testnet";
@@ -32,9 +33,7 @@ const setNetworkId = (networkId: NetworkId) => {
 };
 
 const getAvailableLanguages = (): string[] => {
-	const languages = import.meta.env.VITE_AVAILABLE_LANGUAGES?.split(',')
-		.map((code: string) => code.trim())
-		.filter((code: string) => code.length > 0) || [];
+	const languages = getRuntimeConfigArray('VITE_AVAILABLE_LANGUAGES');
 	
 	return languages.length > 0 ? languages : ['en'];
 };
@@ -105,7 +104,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 	const networkId = getNetworkId();
 	const [isClient, setIsClient] = useState(false);
 	
-	const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
+	const privyAppId = getRuntimeConfig('VITE_PRIVY_APP_ID');
 	const usePrivy = !!privyAppId;
 
 	const parseChainIds = (envVar: string | undefined): Array<{id: number}> | undefined => {
@@ -124,17 +123,17 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 		return !isNaN(chainId) ? { mainnet: { id: chainId } } : undefined;
 	};
 
-	const disableMainnet = import.meta.env.VITE_DISABLE_MAINNET === 'true';
-	const mainnetChains = disableMainnet ? [] : parseChainIds(import.meta.env.VITE_ORDERLY_MAINNET_CHAINS);
-	const disableTestnet = import.meta.env.VITE_DISABLE_TESTNET === 'true';
-	const testnetChains = disableTestnet ? [] : parseChainIds(import.meta.env.VITE_ORDERLY_TESTNET_CHAINS);
+	const disableMainnet = getRuntimeConfigBoolean('VITE_DISABLE_MAINNET');
+	const mainnetChains = disableMainnet ? [] : parseChainIds(getRuntimeConfig('VITE_ORDERLY_MAINNET_CHAINS'));
+	const disableTestnet = getRuntimeConfigBoolean('VITE_DISABLE_TESTNET');
+	const testnetChains = disableTestnet ? [] : parseChainIds(getRuntimeConfig('VITE_ORDERLY_TESTNET_CHAINS'));
 
 	const chainFilter = (mainnetChains || testnetChains) ? {
 		...(mainnetChains && { mainnet: mainnetChains }),
 		...(testnetChains && { testnet: testnetChains })
 	} : undefined;
 
-	const defaultChain = parseDefaultChain(import.meta.env.VITE_DEFAULT_CHAIN);
+	const defaultChain = parseDefaultChain(getRuntimeConfig('VITE_DEFAULT_CHAIN'));
 
 	useEffect(() => {
 		setIsClient(true);
@@ -192,8 +191,8 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 
 	const appProvider = (
 		<OrderlyAppProvider
-			brokerId={networkId === 'mainnet' ? import.meta.env.VITE_ORDERLY_BROKER_ID : 'demo'}
-			brokerName={import.meta.env.VITE_ORDERLY_BROKER_NAME}
+			brokerId={getRuntimeConfig('VITE_ORDERLY_BROKER_ID')}
+			brokerName={getRuntimeConfig('VITE_ORDERLY_BROKER_NAME')}
 			networkId={networkId}
 			onChainChanged={onChainChanged}
 			appIcons={config.orderlyAppProvider.appIcons}

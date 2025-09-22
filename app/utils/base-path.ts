@@ -2,8 +2,10 @@
  * Utility to handle base path for assets and navigation in GitHub Pages deployments
  */
 
+import { getRuntimeConfig } from "./runtime-config";
+
 // Get the base path from environment variable or default to '/'
-export const BASE_PATH = import.meta.env.VITE_BASE_URL || "/";
+export const BASE_PATH = getRuntimeConfig("VITE_BASE_URL") || "/";
 
 /**
  * Prefixes a path with the base path

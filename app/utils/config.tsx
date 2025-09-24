@@ -5,8 +5,10 @@ import { BottomNavProps, FooterProps, MainNavWidgetProps } from "@orderly.networ
 import { AppLogos } from "@orderly.network/react-app";
 import { OrderlyActiveIcon, OrderlyIcon } from "../components/icons/orderly";
 import { withBasePath } from "./base-path";
-import { PortfolioActiveIcon, PortfolioInactiveIcon, TradingActiveIcon, TradingInactiveIcon, LeaderboardActiveIcon, LeaderboardInactiveIcon, MarketsActiveIcon, MarketsInactiveIcon } from "@orderly.network/ui";
+import { PortfolioActiveIcon, PortfolioInactiveIcon, TradingActiveIcon, TradingInactiveIcon, LeaderboardActiveIcon, LeaderboardInactiveIcon, MarketsActiveIcon, MarketsInactiveIcon, useScreen, Flex, cn } from "@orderly.network/ui";
 import { getRuntimeConfig, getRuntimeConfigBoolean, getRuntimeConfigNumber } from "./runtime-config";
+import { Link } from "@remix-run/react";
+import CustomLeftNav from "@/components/CustomLeftNav";
 
 interface MainNavItem {
   name: string;
@@ -37,16 +39,15 @@ export type OrderlyConfig = {
   };
 };
 
-// All available menu items with translation keys
 const ALL_MENU_ITEMS = [
   { name: "Trading", href: "/", translationKey: "common.trading" },
   { name: "Portfolio", href: "/portfolio", translationKey: "common.portfolio" },
   { name: "Markets", href: "/markets", translationKey: "common.markets" },
   { name: "Rewards", href: "/rewards", translationKey: "tradingRewards.rewards" },
   { name: "Leaderboard", href: "/leaderboard", translationKey: "tradingLeaderboard.leaderboard" },
+  { name: "Vaults", href: "/vaults", translationKey: "common.vaults" },
 ];
 
-// Default enabled menu items (excluding Leaderboard)
 const DEFAULT_ENABLED_MENUS = [
   { name: "Trading", href: "/", translationKey: "common.trading" },
   { name: "Portfolio", href: "/portfolio", translationKey: "common.portfolio" },
@@ -179,6 +180,7 @@ const getColorConfig = (): ColorConfigInterface | undefined => {
 
 export const useOrderlyConfig = () => {
   const { t } = useTranslation();
+  const { isMobile } = useScreen();
 
   return useMemo<OrderlyConfig>(() => {
     const enabledMenus = getEnabledMenus();
@@ -226,6 +228,43 @@ export const useOrderlyConfig = () => {
       };
     }
 
+    mainNavProps.customRender = (components) => {
+      return (
+        <Flex justify="between" className="oui-w-full">
+          <Flex
+            itemAlign={"center"}
+            className={cn(
+              "oui-gap-3",
+              "oui-overflow-hidden",
+            )}
+          >
+            { isMobile && 
+              <CustomLeftNav
+                menus={translatedEnabledMenus}
+                externalLinks={customMenus}
+              />
+            }
+            <Link to="/">
+              {isMobile && getRuntimeConfigBoolean('VITE_HAS_SECONDARY_LOGO')
+                ? <img src={withBasePath("/logo-secondary.webp")} alt="logo" style={{ height: "32px" }} />
+                : components.title}
+            </Link>
+            {components.mainNav}
+          </Flex>
+
+          <Flex itemAlign={"center"} className="oui-gap-2">
+            {components.accountSummary}
+            {components.linkDevice}
+            {components.scanQRCode}
+            {components.languageSwitcher}
+            {components.subAccount}
+            {components.chainMenu}
+            {components.walletConnect}
+          </Flex>
+        </Flex>
+      )
+    };
+
     return {
       scaffold: {
         mainNavProps,
@@ -271,5 +310,5 @@ export const useOrderlyConfig = () => {
         },
       },
     };
-  }, [t]);
+  }, [t, isMobile]);
 };

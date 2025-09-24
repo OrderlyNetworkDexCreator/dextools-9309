@@ -1,5 +1,5 @@
 import { MetaFunction } from "@remix-run/node";
-import { LeaderboardWidget } from "@orderly.network/trading-leaderboard";
+import { GeneralLeaderboardWidget } from "@orderly.network/trading-leaderboard";
 import { generatePageTitle } from "@/utils/utils";
 import { getPageMeta } from "@/utils/seo";
 
@@ -10,5 +10,9 @@ export const meta: MetaFunction = () => {
 };
 
 export default function MarketsPage() {
-  return <LeaderboardWidget />;
+  return (
+    <div className="oui-py-6 oui-px-4 lg:oui-px-6 xl:oui-pl-4 lx:oui-pr-6">
+      <GeneralLeaderboardWidget />
+    </div>
+  );
 }

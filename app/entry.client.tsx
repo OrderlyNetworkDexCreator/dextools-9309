@@ -7,11 +7,12 @@
 import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
+import { withBasePath } from "./utils/base-path";
 
 async function loadRuntimeConfig() {
   return new Promise<void>((resolve) => {
     const script = document.createElement('script');
-    script.src = '/config.js';
+    script.src = withBasePath('/config.js');
     script.onload = () => {
       console.log('Runtime config loaded successfully');
       resolve();

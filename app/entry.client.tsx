@@ -8,11 +8,29 @@ import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
-startTransition(() => {
-  hydrateRoot(
-    document,
-    <StrictMode>
-      <RemixBrowser />
-    </StrictMode>
-  );
+async function loadRuntimeConfig() {
+  return new Promise<void>((resolve) => {
+    const script = document.createElement('script');
+    script.src = '/config.js';
+    script.onload = () => {
+      console.log('Runtime config loaded successfully');
+      resolve();
+    };
+    script.onerror = () => {
+      console.log('Runtime config not found, using build-time env vars');
+      resolve();
+    };
+    document.head.appendChild(script);
+  });
+}
+
+loadRuntimeConfig().then(() => {
+  startTransition(() => {
+    hydrateRoot(
+      document,
+      <StrictMode>
+        <RemixBrowser />
+      </StrictMode>
+    );
+  });
 });
